@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import gspread
-import json
+import json, base64
 from google.oauth2.service_account import Credentials
 import googleapiclient.discovery
 import datetime
@@ -11,8 +11,10 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly",
           "https://www.googleapis.com/auth/spreadsheets"]
 
 # Tomamos directamente el secret
-creds_dict = json.loads(st.secrets["google"]["GOOGLE_CREDS"])
-creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+creds_b64 = st.secrets["google"]["GOOGLE_CREDS_B64"]
+creds_json = base64.b64decode(creds_b64).decode("utf-8")
+creds_dict = json.loads(creds_json)
+creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
 
 #Opcion para desarrollo, descomentar una u otra linea
 #creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
