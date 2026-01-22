@@ -132,7 +132,12 @@ df_usuarios = df_fecha[df_fecha["Nombre de tu usuario de Discord"].isin(usuarios
 # --- FUNCION PARA GUARDAR CORRECCIONES ---
 def guardar_correcciones(df_corr, sheet_name="Correcciones"):
     try:
-        creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
+        creds = Credentials.from_service_account_info(
+            st.secrets["google_service_account"], 
+            scopes=SCOPES
+        )
+        #! Opcion de desarrollo
+        # creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
         client = gspread.authorize(creds)
         # Buscar si existe el sheet
         try:
