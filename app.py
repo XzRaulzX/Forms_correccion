@@ -4,11 +4,26 @@ import gspread
 from google.oauth2.service_account import Credentials
 import googleapiclient.discovery
 import datetime
-
+from google.oauth2.service_account import Credentials
+import json
+import os
+from google.oauth2.service_account import Credentials
 # --- CONFIGURACIÓN ---
 FOLDER_ID = "1bN9bMKTFH_Gt7yqdjhmamhj87ZAn2991"  # ID de la carpeta de Google Drive
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly",
           "https://www.googleapis.com/auth/spreadsheets"]
+
+creds_json = os.getenv("GOOGLE_CREDS")
+
+creds_dict = json.loads(creds_json)
+
+
+#Opcion de produccion 
+creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+
+#Opcion para desarrollo, descomentar una u otra linea
+#creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
+print(creds.valid)
 
 def respuesta_valida(respuesta):
     if respuesta is None:
