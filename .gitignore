@@ -208,3 +208,4 @@ __marimo__/
 
 #CREDENCIALES SERVICE GOOGLE
 credentials.json
+.streamlit/
