@@ -32,20 +32,29 @@ def respuesta_valida(respuesta):
 
 # --- CARGA DE TODOS LOS SHEETS ---
 @st.cache_data
+@st.cache_data
 def load_all_sheets():
-    creds = Credentials.from_service_account_file(
-        "credentials.json",
+    # Usar secret, no archivo local
+    creds = Credentials.from_service_account_info(
+        st.secrets["google_service_account"], 
         scopes=SCOPES
     )
+    #Opcion de desarrollo
+    # creds = Credentials.from_service_account_file(
+    #     "credentials.json",
+    #     scopes=SCOPES
+    # )
     client = gspread.authorize(creds)
     drive_service = googleapiclient.discovery.build('drive', 'v3', credentials=creds)
-
+    
     query = f"'{FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.spreadsheet'"
     results = drive_service.files().list(q=query, fields="files(id, name)").execute()
     files = results.get('files', [])
 
     all_data = []
     hoy = datetime.datetime.now()
+    ...
+
 
     for f in files:
         try:
