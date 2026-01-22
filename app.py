@@ -14,7 +14,7 @@ SCOPES = ["https://www.googleapis.com/auth/drive.readonly",
 creds_b64 = st.secrets["google"]["GOOGLE_CREDS_B64"]
 creds_json = base64.b64decode(creds_b64).decode("utf-8")
 creds_dict = json.loads(creds_json)
-creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
+creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
 
 #Opcion para desarrollo, descomentar una u otra linea
 #creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
