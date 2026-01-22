@@ -13,7 +13,7 @@ FOLDER_ID = "1bN9bMKTFH_Gt7yqdjhmamhj87ZAn2991"  # ID de la carpeta de Google Dr
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly",
           "https://www.googleapis.com/auth/spreadsheets"]
 
-creds_json = os.getenv("GOOGLE_CREDS")
+creds_json = st.secrets["GOOGLE_CREDS"]
 
 creds_dict = json.loads(creds_json)
 
