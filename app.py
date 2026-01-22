@@ -10,11 +10,11 @@ FOLDER_ID = "1bN9bMKTFH_Gt7yqdjhmamhj87ZAn2991"  # ID de la carpeta de Google Dr
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly",
           "https://www.googleapis.com/auth/spreadsheets"]
 
-# Tomamos directamente el secret
-creds_b64 = st.secrets["google"]["GOOGLE_CREDS_B64"]
-creds_json = base64.b64decode(creds_b64).decode("utf-8")
-creds_dict = json.loads(creds_json)
-creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPES)
+# Toma todos los campos del secret group
+sa_info = st.secrets["google_service_account"]
+
+creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
+
 
 #Opcion para desarrollo, descomentar una u otra linea
 #creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
