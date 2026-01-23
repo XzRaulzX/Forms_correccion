@@ -23,6 +23,9 @@ TAIGA_PASSWORD = st.secrets["taiga"]["password"]
 sa_info = st.secrets["google_service_account"]
 creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
 
+
+
+
 #?  Entorno Desarrollo
 # TAIGA_PROJECT_ID = "1768152"
 # TAIGA_USERNAME = "HyDr4"
@@ -88,6 +91,20 @@ def crear_card_taiga(title, body, project_id=TAIGA_PROJECT_ID):
     except requests.exceptions.RequestException as e:
         st.error(f"Error creando card en Taiga: {e}")
         return None
+
+# --- FUNCIONES AUXILIARES ---
+def obtener_valor_columna(df_row, col_base_name):
+    """
+    Devuelve el primer valor válido de columnas que empiecen con col_base_name
+    en un DataFrame row. Si ninguna tiene valor, devuelve '(Vacío)'.
+    """
+    for col in df_row.index:
+        if col.startswith(col_base_name):
+            valor = df_row[col]
+            if respuesta_valida(valor):
+                return valor
+    return "(Vacío)"
+
 
 # --- SUBIR VARIAS CARDS A TAIGA ---
 def subir_cards_taiga(cards):
@@ -233,17 +250,20 @@ for usuario in usuarios_seleccionados:
     user_info = df_fecha[df_fecha["Nombre de tu usuario de Discord"] == usuario].iloc[0]
     st.subheader(f"Usuario: {usuario} (Sheet: {user_info['__origen_sheet__']})")
 
+
     # Inicializar card
     if usuario not in st.session_state.taiga_cards:
-        # El cuerpo ahora toma la columna "Proceso de wl"
-        body_texto = user_info.get("Proceso de wl", "")
+        body_texto = obtener_valor_columna(user_info, "Proceso de wl")
         st.session_state.taiga_cards[usuario] = {
             "title": usuario,
-            "body": f"Mail: {user_info.get('Email Address','N/A')}\n"
-                    f"Edad: {user_info.get('Fecha de tu nacimiento','N/A')}\n"
-                    f"ID64: {user_info.get('Dinos tu ID64 de Steam','N/A')}\n"
-                    
+            "body": (
+                f"Mail: {obtener_valor_columna(user_info, 'Email Address')}\n"
+                f"Edad: {obtener_valor_columna(user_info, 'Fecha de tu nacimiento')}\n"
+                f"ID64: {obtener_valor_columna(user_info, 'Dinos tu ID64 de Steam')}\n"
+            )
         }
+
+
 
     # Inputs persistentes
     st.session_state.taiga_cards[usuario]["title"] = st.text_input(
