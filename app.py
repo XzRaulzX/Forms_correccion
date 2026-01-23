@@ -14,25 +14,24 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets"
 ]
 
-#! Opcion de produccion
-# sa_info = st.secrets["google_service_account"]
-# creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
-
-
-# Credenciales Desarrollo
-creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
-print(creds.valid)
-
-
 TAIGA_API_URL = "https://api.taiga.io/api/v1"
-TAIGA_PROJECT_ID = "1768152"
 
-# TAIGA_TOKEN = st.secrets["taiga"]["token"]
-# TAIGA_PROJECT_ID = st.secrets["taiga"]["project_id"]
+#!  Opcion de produccion
+TAIGA_PROJECT_ID = st.secrets["taiga"]["project_id"]
+TAIGA_USERNAME = st.secrets["taiga"]["username"]
+TAIGA_PASSWORD = st.secrets["taiga"]["password"]
+sa_info = st.secrets["google_service_account"]
+creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
 
-TAIGA_USERNAME = "HyDr4"
-TAIGA_PASSWORD = "Demian2003+-*"
+#?  Entorno Desarrollo
+# TAIGA_PROJECT_ID = "1768152"
+# TAIGA_USERNAME = "HyDr4"
+# TAIGA_PASSWORD = "Demian2003+-*"
+# creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
 
+
+
+print(creds.valid)
 # --- AUTENTICACIÓN TAIGA ---
 def obtener_token_taiga(username=TAIGA_USERNAME, password=TAIGA_PASSWORD):
     """
