@@ -29,7 +29,7 @@ creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
 #?  Entorno Desarrollo
 # TAIGA_PROJECT_ID = "1768152"
 # TAIGA_USERNAME = "HyDr4"
-# TAIGA_PASSWORD = "Demian2003+-*"
+# TAIGA_PASSWORD = ""
 # creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
 
 
