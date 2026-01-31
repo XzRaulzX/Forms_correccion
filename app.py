@@ -23,16 +23,11 @@ TAIGA_PASSWORD = st.secrets["taiga"]["password"]
 sa_info = st.secrets["google_service_account"]
 creds = Credentials.from_service_account_info(sa_info, scopes=SCOPES)
 
-
-
-
 #?  Entorno Desarrollo
 # TAIGA_PROJECT_ID = "1768152"
 # TAIGA_USERNAME = "HyDr4"
 # TAIGA_PASSWORD = ""
 # creds = Credentials.from_service_account_file("credentials.json", scopes=SCOPES)
-
-
 
 print(creds.valid)
 # --- AUTENTICACIÓN TAIGA ---
@@ -124,6 +119,29 @@ def subir_cards_taiga(cards):
             resultados[usuario] = {"success": False, "error": str(e)}
     return resultados
 
+def boton_autenticacion_taiga():
+    """
+    Botón explícito para obtener el token de Taiga.
+    """
+    st.subheader("🔐 Paso 1 · Conectar con Taiga")
+
+    if "taiga_token" in st.session_state:
+        st.success("Conectado a Taiga ✅")
+        return True
+
+    if st.button("🔑 Subir a Taiga · Paso 1 (Autenticación)"):
+        token = obtener_token_taiga()
+        if token:
+            st.success("Token de Taiga obtenido correctamente ✅")
+            return True
+        else:
+            st.error("No se pudo autenticar con Taiga ❌")
+            return False
+
+    st.info("Debes autenticarte en Taiga antes de poder subir tarjetas.")
+    return False
+
+
 # --- FUNCIONES AUXILIARES ---
 def respuesta_valida(respuesta):
     """
@@ -209,6 +227,7 @@ def guardar_correcciones(df_corr, sheet_name="Correcciones"):
 # --- CARGAR DATOS ---
 df = load_all_sheets()
 
+
 st.title("📋 Corrección de Formularios - Varios Sheets")
 
 if df.empty:
@@ -247,6 +266,7 @@ if "taiga_cards" not in st.session_state:
 
 # --- CORRECCIÓN Y TAIGA POR USUARIO SELECCIONADO ---
 for usuario in usuarios_seleccionados:
+    taiga_conectado = boton_autenticacion_taiga()
     user_info = df_fecha[df_fecha["Nombre de tu usuario de Discord"] == usuario].iloc[0]
     st.subheader(f"Usuario: {usuario} (Sheet: {user_info['__origen_sheet__']})")
 
@@ -281,13 +301,21 @@ for usuario in usuarios_seleccionados:
 
     # Botón Subir tarjeta Taiga
     if st.button(f"📤 Subir tarjeta Taiga - {usuario}", key=f"taiga_{usuario}"):
-        title = st.session_state.taiga_cards[usuario]["title"]
-        body = st.session_state.taiga_cards[usuario]["body"]
-        resultado = crear_card_taiga(title, body)
-        if resultado and "id" in resultado:
-            st.success(f"Card enviada a Taiga ✅\nID: {resultado['id']}\n**Title:** {title}\n**Body:**\n{body}")
+        if not taiga_conectado:
+            st.warning("⚠️ Primero debes completar el Paso 1: Autenticación en Taiga")
         else:
-            st.error("Contacta con el DEV: No se pudo crear la card en Taiga. Revisa el token y el ID del proyecto.")
+            title = st.session_state.taiga_cards[usuario]["title"]
+            body = st.session_state.taiga_cards[usuario]["body"]
+            resultado = crear_card_taiga(title, body)
+            if resultado and "id" in resultado:
+                st.success(
+                    f"Card enviada a Taiga ✅\n\n"
+                    f"**ID:** {resultado['id']}\n\n"
+                    f"**Title:** {title}\n\n"
+                    f"**Body:**\n{body}"
+                )
+            else:
+                st.error("No se pudo crear la card en Taiga.")
 
 
     # Expander con preguntas y botones de corrección
